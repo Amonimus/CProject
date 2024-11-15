@@ -11,8 +11,7 @@
                 "-o",
                 "${workspaceFolder}\\main.exe",
                 "-l",
-                "d3d11",
-                "d3dx11"
+                "d3d11"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

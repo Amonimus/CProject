@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Window.h"
@@ -23,5 +22,5 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
             return ::DefWindowProcW(hwnd, msg, wparam, lparam);
         }
     }
-    return NULL;
+    return 0;
 }

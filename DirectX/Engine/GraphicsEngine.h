@@ -2,7 +2,7 @@
 #include <d3d11.h>
 #pragma comment(lib, "d3d11.lib")
 
-#include "SwapChain.h"
+// #include "SwapChain.h"
 
 class GraphicsEngine {
     private:
@@ -15,5 +15,5 @@ class GraphicsEngine {
         bool init();
         bool release();
         static GraphicsEngine* get();
-        SwapChain* createSwapChain();
+        // SwapChain* createSwapChain();
 };
