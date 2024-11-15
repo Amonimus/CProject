@@ -15,7 +15,7 @@
             "environment": [],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
-            "preLaunchTask": "C/C++: g++.exe build active file"
+            "preLaunchTask": "g++ build"
         }
     ]
 }

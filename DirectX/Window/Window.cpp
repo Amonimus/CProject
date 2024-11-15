@@ -2,32 +2,10 @@
 #define UNICODE
 #endif
 #include "Window.h"
-
-Window* window = nullptr;
+#include "WndCallback.cpp"
 
 Window::Window() {}
 Window::~Window() {}
-
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
-    // Window events
-    switch(msg){
-        case WM_CREATE: {
-            window->onCreate();
-            break;
-        }
-        case WM_DESTROY: {
-            window->onDestroy();
-            // Send a terminate request to the system
-            ::PostQuitMessage(0);
-            break;
-        }
-        default: {
-            // Unhandled Window event
-            return ::DefWindowProcW(hwnd, msg, wparam, lparam);
-        }
-    }
-    return 0;
-}
 
 bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wchar_t* icon_path) {
     // Window initialization
@@ -37,10 +15,14 @@ bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wc
     wc.cbWndExtra = 0;
     wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    //wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wc.hIcon = (HICON) LoadImage(NULL, icon_path, IMAGE_ICON, 32, 32, LR_LOADFROMFILE|LR_DEFAULTSIZE|LR_SHARED);
-    //wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-    wc.hIconSm = (HICON) LoadImage(NULL, icon_path, IMAGE_ICON, 16, 16, LR_LOADFROMFILE|LR_DEFAULTSIZE|LR_SHARED);
+    if(icon_path){
+        wc.hIcon = (HICON) LoadImage(NULL, icon_path, IMAGE_ICON, 32, 32, LR_LOADFROMFILE|LR_DEFAULTSIZE|LR_SHARED);
+        wc.hIconSm = (HICON) LoadImage(NULL, icon_path, IMAGE_ICON, 16, 16, LR_LOADFROMFILE|LR_DEFAULTSIZE|LR_SHARED);
+    } else {
+        wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+        wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+    }
+        
     wc.hInstance = NULL;
     wc.lpszClassName = L"MyWindowClass";
     wc.lpszMenuName = L"";
@@ -48,6 +30,7 @@ bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wc
     
     if(!::RegisterClassEx(&wc)){
         // If registration fails, cancel
+        print("Window registration failed!");
         return false;
     };
 
@@ -70,7 +53,7 @@ bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wc
     m_hwnd = ::CreateWindowEx(
         dwExStyle,
         wc.lpszClassName,
-        lpWindowName,
+        (LPCWSTR)lpWindowName,
         dwStyle,
         xPos,
         yPos,
@@ -84,6 +67,7 @@ bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wc
 
     if(!m_hwnd){
         // If the creation fails, cancel
+        print("Window creation failed!");
         return false;
     }
 
@@ -121,6 +105,8 @@ bool Window::release() {
     return true;
 }
 
+void Window::onCreate() {}
+
 bool Window::isRun() {
     // Getter to see if Window is running
     return m_is_run;
@@ -128,7 +114,12 @@ bool Window::isRun() {
 
 void Window::onDestroy() {
     // Action on Window destructor
+    print("Window is destroyed");
     m_is_run = false;
 }
 
-void Window::onCreate() {}
+RECT Window::getClientWindowRect() {
+	RECT rc;
+	::GetClientRect(this->m_hwnd, &rc);
+	return rc;
+}

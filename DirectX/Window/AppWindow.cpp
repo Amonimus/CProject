@@ -1,8 +1,5 @@
 #include "AppWindow.h"
 
-using std::wstring;
-
-
 AppWindow::AppWindow() {}
 AppWindow::AppWindow(const wchar_t* lpWindowName, int nWidth, int nHeight, const wchar_t* iconPath) {
     AppWindow::lpWindowName = lpWindowName;
@@ -13,10 +10,13 @@ AppWindow::AppWindow(const wchar_t* lpWindowName, int nWidth, int nHeight, const
 AppWindow::~AppWindow() {}
 
 void AppWindow::run() {
+    
     if(init(AppWindow::lpWindowName, AppWindow::nWidth, AppWindow::nHeight, AppWindow::iconPath)) {
         while(isRun()){
             broadcast();
         }
+    } else {
+        print("Failed to Initialize!");
     }
 }
 void AppWindow::onCreate() {

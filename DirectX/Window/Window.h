@@ -1,12 +1,6 @@
 #pragma once
 #include <Windows.h>
-
-#include <iostream>
-#include <string>
-#include <fstream>
-
-using std::cout, std::cin, std::endl;
-using std::string, std::to_string;
+#include "../../utils/utils.cpp"
 
 class Window {
     protected:
@@ -20,6 +14,8 @@ class Window {
         bool broadcast();
         bool release();
         bool isRun();
+
+        RECT getClientWindowRect();
 
         // Events
         virtual void onCreate() = 0;

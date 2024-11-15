@@ -3,13 +3,14 @@
 
 #include "Window.cpp"
 #include "../Engine/GraphicsEngine.cpp"
+#include "../../utils/utils.cpp"
 
 class AppWindow : public Window {
     private:
-        const wchar_t* lpWindowName;
-        int nWidth;
-        int nHeight;
-        const wchar_t* iconPath;
+        const wchar_t* lpWindowName = L"WindowName";
+        int nWidth = 1024;
+        int nHeight = 768;
+        const wchar_t* iconPath = L"res/computer.ico";
 
     public:
         AppWindow();
