@@ -7,11 +7,13 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "*.cpp",
+                "${workspaceFolder}\\src\\main.cpp",
                 "-o",
                 "${workspaceFolder}\\main.exe",
                 "-l",
-                "d3d11"
+                "d3d11",
+                "-l",
+                "d3dcompiler"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

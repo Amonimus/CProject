@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <string>
-#include <fstream>
 
 using std::cout, std::endl;
 using std::string, std::to_string;

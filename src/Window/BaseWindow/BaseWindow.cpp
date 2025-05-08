@@ -1,28 +1,24 @@
-#ifndef UNICODE
-#define UNICODE
-#endif
-#include "Window.h"
+#pragma once
+#include "BaseWindow.h"
 #include "WndCallback.cpp"
+#include "../../utils/Logger/Logger.cpp"
 
-Window::Window() {}
-Window::~Window() {}
+BaseWindow::BaseWindow() {}
+BaseWindow::~BaseWindow() {}
 
-bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wchar_t* icon_path) {
-    // Window initialization
+bool BaseWindow::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wchar_t* icon_path) {
+    // BaseWindow initialization
+    logger.debug("Window init begin");
     WNDCLASSEX wc;
     wc.cbClsExtra = 0;
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.cbWndExtra = 0;
+
     wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    if(icon_path){
-        wc.hIcon = (HICON) LoadImage(NULL, icon_path, IMAGE_ICON, 32, 32, LR_LOADFROMFILE|LR_DEFAULTSIZE|LR_SHARED);
-        wc.hIconSm = (HICON) LoadImage(NULL, icon_path, IMAGE_ICON, 16, 16, LR_LOADFROMFILE|LR_DEFAULTSIZE|LR_SHARED);
-    } else {
-        wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-        wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-    }
-        
+
+    loadIcon(&wc, icon_path);
+    
     wc.hInstance = NULL;
     wc.lpszClassName = L"MyWindowClass";
     wc.lpszMenuName = L"";
@@ -30,7 +26,7 @@ bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wc
     
     if(!::RegisterClassEx(&wc)){
         // If registration fails, cancel
-        print("Window registration failed!");
+        logger.error("Window registration failed!");
         return false;
     };
 
@@ -67,7 +63,7 @@ bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wc
 
     if(!m_hwnd){
         // If the creation fails, cancel
-        print("Window creation failed!");
+        logger.error("Window creation failed!");
         return false;
     }
 
@@ -77,49 +73,68 @@ bool Window::init(const wchar_t* lpWindowName, int nWidth, int nHeight, const wc
     ::UpdateWindow(m_hwnd);
 
     m_is_run = true;
+    logger.debug("Window initialized successfully");
     return true;
 }
 
-bool Window::broadcast() {
-    // Take system signals
+void BaseWindow::loadIcon(WNDCLASSEX* wc, const wchar_t* icon_path){
+    if(icon_path){
+        wc->hIcon = (HICON) LoadImage(NULL, icon_path, IMAGE_ICON, 32, 32, LR_LOADFROMFILE|LR_DEFAULTSIZE|LR_SHARED);
+        wc->hIconSm = (HICON) LoadImage(NULL, icon_path, IMAGE_ICON, 16, 16, LR_LOADFROMFILE|LR_DEFAULTSIZE|LR_SHARED);
+    } else {
+        wc->hIcon = LoadIcon(NULL, IDI_APPLICATION);
+        wc->hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+    }
+}
+
+void BaseWindow::setHWND(HWND hwnd) {
+    this->m_hwnd = hwnd;
+}
+
+bool BaseWindow::isRun() {
+    return m_is_run;
+}
+
+RECT BaseWindow::getClientWindowRect() {
+	RECT rc;
+	::GetClientRect(this->m_hwnd, &rc);
+	return rc;
+}
+
+// Take system signals
+bool BaseWindow::broadcast() {
     MSG msg;
+    // Update graphics
+    window->onUpdate();
+    // Handle all system messages in queue
     while(::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
-        // Handle all system messages in queue
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    // Update graphics
-    window->onUpdate();
     // Minimal pause to avoid hanging
     Sleep(0);
     return true;
 }
 
-bool Window::release() {
-    // Action on Window closure
+// Action on Window closure
+bool BaseWindow::release() {
     if(!::DestroyWindow(m_hwnd)){
         // Something prevents from closing the Window
+        logger.error("Window release failed!");
         return false;
     }
-
+    logger.debug("Window is released");
     return true;
 }
 
-void Window::onCreate() {}
+// Events
 
-bool Window::isRun() {
-    // Getter to see if Window is running
-    return m_is_run;
+void BaseWindow::onCreate() {
+    logger.debug("Window is created");
 }
-
-void Window::onDestroy() {
+void BaseWindow::onUpdate() {}
+void BaseWindow::onDestroy() {
     // Action on Window destructor
-    print("Window is destroyed");
     m_is_run = false;
-}
-
-RECT Window::getClientWindowRect() {
-	RECT rc;
-	::GetClientRect(this->m_hwnd, &rc);
-	return rc;
+    logger.debug("Window is destroyed");
 }

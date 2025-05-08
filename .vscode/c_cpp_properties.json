@@ -3,14 +3,17 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${default}"
             ],
-            "defines": [],
-            "windowsSdkVersion": "10.0.22621.0",
-            "compilerPath": "W:/msys64/ucrt64/bin/gcc.exe",
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "cl.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "windows-gcc-x64"
+            "intelliSenseMode": "windows-msvc-x64"
         }
     ],
     "version": 4
