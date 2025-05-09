@@ -31,7 +31,7 @@ class D3DWindow : public BaseWindow {
         Color* m_bg_color;
 
     private:
-        SwapChain* m_swap_chain;
+        SwapChain* m_sc;
         VertexBuffer* m_vb;
         VertexShader* m_vs;
         PixelShader* m_ps;

@@ -26,7 +26,7 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height) {
 
 	// Create the swap chain for the window indicated by HWND parameter
     logger.debug("Creating Swap Chain");
-	HRESULT hr = GraphicsEngine::get()->m_dxgi_factory->CreateSwapChain(device, &desc, &m_swap_chain);
+	HRESULT hr = GraphicsEngine::get()->m_dxgi_factory->CreateSwapChain(device, &desc, &m_sc);
 	if (FAILED(hr))	{
         logger.error("Failed to create SwapChain");
 	 	return false;
@@ -35,14 +35,14 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height) {
 	// Get the back buffer color and create its render target view
     logger.debug("Creating texture buffer");
 	ID3D11Texture2D* buffer = NULL;
-	hr = m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
+	hr = m_sc->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
 	if (FAILED(hr))	{
         logger.error("Failed to create SwapChain Buffer");
 	 	return false;
 	}
 
     logger.debug("Creating render target view");
-	hr = device->CreateRenderTargetView(buffer, NULL, &m_render_taget_view);
+	hr = device->CreateRenderTargetView(buffer, NULL, &m_rtv);
 	buffer->Release();
 	if (FAILED(hr))	{
         logger.error("Failed to create SwapChain Render");
@@ -53,13 +53,13 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height) {
 }
 
 bool SwapChain::present(bool vsync) {
-	m_swap_chain->Present(vsync, 0);
+	m_sc->Present(vsync, 0);
     return true;
 }
 
 bool SwapChain::release() {
 	// Release the SwapChain
- 	m_swap_chain->Release();
+ 	m_sc->Release();
  	delete this;
  	return true;
 }

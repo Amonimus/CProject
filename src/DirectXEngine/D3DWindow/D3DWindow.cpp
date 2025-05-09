@@ -9,7 +9,7 @@ struct vec3 {
 };
 struct vertex {
     vec3 position;
-    vec3 color;
+    //vec3 color;
 };
 
 D3DWindow::D3DWindow(const wchar_t* lpWindowName, int nWidth, int nHeight, const wchar_t* iconPath, Color* bg_color) {
@@ -41,21 +41,24 @@ void D3DWindow::onCreate() {
     BaseWindow::onCreate();
     GraphicsEngine::get()->init();
 
-    m_swap_chain = GraphicsEngine::get()->createSwapChain();
+    m_sc = GraphicsEngine::get()->createSwapChain();
     RECT rc = this->getClientWindowRect();
-    m_swap_chain->init(this->m_hwnd, rc.right-rc.left, rc.bottom-rc.top);
+    m_sc->init(this->m_hwnd, rc.right-rc.left, rc.bottom-rc.top);
 
     vertex vertex_list[] = {
         {-0.5f, -0.5f, 0.0f},
         {0.0f, 0.5f, 0.0f},
         {0.5f, -0.5f, 0.0f},
-        {0.5f, 0.5f, 0.0f},
+        //{0.5f, 0.5f, 0.0f},
     };
     m_vb = GraphicsEngine::get()->createVertexBuffer();
     UINT list_size = ARRAYSIZE(vertex_list);
 
     void* shader_byte_code = nullptr;
     size_t shader_size = 0;
+    GraphicsEngine::get()->createShaders();
+    GraphicsEngine::get()->getShaderBufferAndSize(&shader_byte_code, &shader_size);
+
     GraphicsEngine::get()->compileVertexShader(L"res/Shader.fx", "vsmain", &shader_byte_code, &shader_size);
     m_vs = GraphicsEngine::get()->createVertexShader(shader_byte_code, shader_size);
     m_vb->load(vertex_list, sizeof(vertex_list), list_size, shader_byte_code, shader_size);
@@ -70,7 +73,7 @@ void D3DWindow::onUpdate() {
     BaseWindow::onUpdate();
     // Clears render areas
     GraphicsEngine::get()->getImmediateDeviceContext()->clearRenderTargetColor(
-        this->m_swap_chain,
+        this->m_sc,
         this->m_bg_color->red,
         this->m_bg_color->green,
         this->m_bg_color->blue,
@@ -80,13 +83,15 @@ void D3DWindow::onUpdate() {
     RECT rc = this->getClientWindowRect();
     GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right-rc.left, rc.bottom-rc.top);
     // Set shaders
-    GraphicsEngine::get()->getImmediateDeviceContext()->setVertextShader(m_vs);
-    GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(m_ps);
+    GraphicsEngine::get()->setShaders();
+    //GraphicsEngine::get()->getImmediateDeviceContext()->setVertextShader(m_vs);
+    //GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(m_ps);
     // Set draw buffer
     GraphicsEngine::get()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
     // Draw the figure
+    GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleList(m_vb->getVertexListSize(), 0);
     GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getVertexListSize(), 0);
-    m_swap_chain->present(false);
+    m_sc->present(false);
 }
 // Event: On Window destruction
 void D3DWindow::onDestroy() {
@@ -94,6 +99,6 @@ void D3DWindow::onDestroy() {
     m_vb->release();
     m_vs->release();
     m_ps->release();
-    m_swap_chain->release();
+    m_sc->release();
     GraphicsEngine::get()->release();
 }

@@ -6,8 +6,8 @@ DeviceContext::DeviceContext(ID3D11DeviceContext* device_context):m_device_conte
 DeviceContext::~DeviceContext(){}
 void DeviceContext::clearRenderTargetColor(SwapChain* swap_chian, float red, float green, float blue, float alpha) {
     FLOAT clear_color[]= {red, green, blue, alpha};
-    m_device_context->ClearRenderTargetView(swap_chian->m_render_taget_view, clear_color);
-    m_device_context->OMSetRenderTargets(1, &swap_chian->m_render_taget_view, NULL);
+    m_device_context->ClearRenderTargetView(swap_chian->m_rtv, clear_color);
+    m_device_context->OMSetRenderTargets(1, &swap_chian->m_rtv, NULL);
 }
 void DeviceContext::setVertexBuffer(VertexBuffer *vertex_buffer) {
     UINT stride = vertex_buffer->m_vertex_size;

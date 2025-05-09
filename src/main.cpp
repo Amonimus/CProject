@@ -4,7 +4,7 @@
 
 // Create window
 void start_app(){
-    Color bg_color = Color(1, 0, 1);
+    Color bg_color = Color(1, 1, 1);
     App app = App(L"DirectX app", 640, 480, L"res/computer.ico", &bg_color);
     app.run();
 }

@@ -13,7 +13,7 @@ class SwapChain {
         bool present(bool vsync);
         bool release();
     private:
-        IDXGISwapChain* m_swap_chain;
-        ID3D11RenderTargetView* m_render_taget_view;
+        IDXGISwapChain* m_sc;
+        ID3D11RenderTargetView* m_rtv;
         friend class DeviceContext;
 };

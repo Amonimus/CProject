@@ -22,9 +22,13 @@ class GraphicsEngine {
         DeviceContext* getImmediateDeviceContext();
 
         VertexBuffer* createVertexBuffer();
+
+        bool createShaders();
+        bool setShaders();
+        void getShaderBufferAndSize(void** bytecode, size_t* size);
+
         VertexShader* createVertexShader(const void* shader_byte_code, size_t byte_code_size);
         bool compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_size, size_t* byte_code_size);
-
         PixelShader* createPixelShader(const void* shader_byte_code, size_t byte_code_size);
         bool compilePixelShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_size, size_t* byte_code_size);
 
